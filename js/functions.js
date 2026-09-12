@@ -16,10 +16,16 @@ $(function () {
     gardenCtx.globalCompositeOperation = "lighter";
     garden = new Garden(gardenCtx, gardenCanvas);
 	
-	$("#content").css("width", $loveHeart.width() + $("#code").width());
-	$("#content").css("height", Math.max($loveHeart.height(), $("#code").height()));
-	$("#content").css("margin-top", Math.max(($window.height() - $("#content").height()) / 2, 10));
-	$("#content").css("margin-left", Math.max(($window.width() - $("#content").width()) / 2, 10));
+	if ($window.width() <= 720) {
+		$loveHeart.css({ float: "none", width: "100%", margin: "0 auto" });
+		$("#code").css({ float: "none", width: "100%", boxSizing: "border-box" });
+		$("#content").css({ width: "100%", height: "auto", marginTop: 0, marginLeft: 0 });
+	} else {
+		$("#content").css("width", $loveHeart.width() + $("#code").width());
+		$("#content").css("height", Math.max($loveHeart.height(), $("#code").height()));
+		$("#content").css("margin-top", Math.max(($window.height() - $("#content").height()) / 2, 10));
+		$("#content").css("margin-left", Math.max(($window.width() - $("#content").width()) / 2, 10));
+	}
 
     // renderLoop
     setInterval(function () {
@@ -30,15 +36,20 @@ $(function () {
 $(window).resize(function() {
     var newWidth = $(window).width();
     var newHeight = $(window).height();
-    if (newWidth != clientWidth && newHeight != clientHeight) {
+	if (newWidth != clientWidth || newHeight != clientHeight) {
         location.replace(location);
     }
 });
 
+function getHeartScale() {
+	return Math.min(1, $("#loveHeart").width() / 670);
+}
+
 function getHeartPoint(angle) {
 	var t = angle / Math.PI;
-	var x = 19.5 * (16 * Math.pow(Math.sin(t), 3));
-	var y = - 20 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+	var scale = getHeartScale();
+	var x = 19.5 * (16 * Math.pow(Math.sin(t), 3)) * scale;
+	var y = -20 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * scale;
 	return new Array(offsetX + x, offsetY + y);
 }
 
@@ -124,8 +135,9 @@ function birthdayCountdown(targetDate) {
 }
 
 function heartCoords(t) {
-	var x = 19.5 * (16 * Math.pow(Math.sin(t), 3));
-	var y = -20 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+	var scale = getHeartScale();
+	var x = 19.5 * (16 * Math.pow(Math.sin(t), 3)) * scale;
+	var y = -20 * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) * scale;
 	return { x: x, y: y };
 }
 
